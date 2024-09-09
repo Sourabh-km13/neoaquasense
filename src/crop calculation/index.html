@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Water Requirement Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1 id="head">Crop Water Requirement </h1>
+    <img src="https://static.wixstatic.com/media/827d0d_3c792f419a7849a09fa28be1e1ea5841~mv2.jpg/v1/fill/w_1000,h_618,al_c,q_90,usm_0.66_1.00_0.01/827d0d_3c792f419a7849a09fa28be1e1ea5841~mv2.jpg" width="900px" height="500px">
+
+    <div class="calculator-container">
+        <h1>Crop Water Requirement Calculator</h1>
+        <form id="waterCalcForm">
+            <label for="field-area">Field Area (in square meters):</label>
+                <input type="number" id="field-area" name="field-area" required>
+            
+            <label for="crop">Select Crop:</label>
+            <select id="crop" name="crop">
+                <option value="wheat">Wheat</option>
+                <option value="rice">Rice</option>
+                <option value="maize">Maize</option>
+                <option value="cotton">Cotton</option>
+            </select>
+
+            <label for="soil">Select Soil Type:</label>
+            <select id="soil" name="soil">
+                <option value="sandy">Sandy</option>
+                <option value="loamy">Loamy</option>
+                <option value="clay">Clay</option>
+                <option value="silt">Silt</option>
+            </select>
+
+            <label for="climate">Select Climate Condition:</label>
+            <select id="climate" name="climate">
+                <option value="dry">Dry</option>
+                <option value="humid">Humid</option>
+                <option value="temperate">Temperate</option>
+                <option value="wet">Wet</option>
+            </select>
+
+            <button type="button" onclick="calculateWaterRequirement()">Calculate</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+ <div id="CropR">
+    <h2>Crop Recommendation Based on Water Availability</h2>
+    <img src="https://th.bing.com/th/id/OIP.JPHI96Q-MGzlzGQtBErhdwHaE8?w=282&h=188&c=7&r=0&o=5&pid=1.7" width="800px" height="400px">
+    
+    <button onclick="getLocation()">Get Crop Recommendations Based on My Location</button>
+    <h2>Recommendations</h2>
+    <div id="result1"></div>
+ </div>
+
+    <script src="script.js"></script>
+    
+    <script>
+        const statesData = {
+            "Maharashtra": {
+                "water_availability": "low",
+                "suitable_crops": ["Jowar", "Bajra", "Groundnut"]
+            },
+            "Punjab": {
+                "water_availability": "high",
+                "suitable_crops": ["Wheat", "Rice", "Sugarcane"]
+            },
+            "Tamil Nadu": {
+                "water_availability": "medium",
+                "suitable_crops": ["Paddy", "Ragi", "Cotton"]
+            },
+            "Delhi": {
+                "water_availability": "low",
+                "suitable_crops": ["Pearl Millet (Bajra)", "Maize", "Mustard"]
+            }
+        };
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('result1').innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            // Use a geocoding API to convert lat/lon to state
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    const state = data.address.state;
+                    getRecommendations(state);
+                })
+                .catch(error => {
+                    document.getElementById('result1').innerHTML = "Error getting location data.";
+                });
+        }
+
+        function getRecommendations(state) {
+            const data = statesData[state];
+
+            if (data) {
+                const crops = data.suitable_crops.join(', ');
+                document.getElementById('result1').innerHTML = `
+                    <p><strong>State:</strong> ${state}</p>
+                    <p><strong>Water Availability:</strong> ${data.water_availability}</p>
+                    <p><strong>Recommended Crops:</strong> ${crops}</p>
+                `;
+            } else {
+                document.getElementById('result1').innerHTML = `<p>State not found or not supported. Please provide a valid state.</p>`;
+            }
+        }
+
+        function showError(error) {
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('result1').innerHTML = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('result1').innerHTML = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('result1').innerHTML = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('result1').innerHTML = "An unknown error occurred.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

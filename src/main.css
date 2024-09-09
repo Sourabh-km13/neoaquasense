@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.translated-ltr{
+    margin-top:-40px;
+    
+}
+.translated-ltr{
+    margin-top:-40px;
+
+}
+.goog-te-banner-frame{
+    display: none;
+    margin-top: -20px;
+}
+.goog-logo-link{
+    display: none !important;
+}
+
+
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+    display: none;
+}
+    
