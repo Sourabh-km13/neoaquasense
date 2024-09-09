@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "vite"
+    "start": "vite",
     "build": "mkdir -p dist && cp src/*.html src/*.css src/*.js dist/",
   },
   "devDependencies": {
